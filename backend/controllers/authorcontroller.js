@@ -1,5 +1,5 @@
 const pool = require("../db");
-//testing my Git workflow
+
 const getAuthors = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM authors");
