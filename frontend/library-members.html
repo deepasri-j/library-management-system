@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library Members | LibraryMS</title>
+    <link rel="stylesheet" href="library-members.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">📚</span><span class="name">LibraryMS</span>
+      </div>
+      <div class="user-area">
+        <div class="avatar">A</div>
+        <span class="user-name">Admin</span>
+        <a href="login.html" class="btn-logout">Logout</a>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="dashboard.html"
+              ><span class="nav-icon">📊</span>Dashboard</a
+            >
+          </li>
+          <li class="nav-item">
+            <a href="#books"><span class="nav-icon">📖</span>All Books</a>
+          </li>
+          <li class="nav-item">
+            <a href="#add-book"><span class="nav-icon">➕</span>Add Book</a>
+          </li>
+          <li class="nav-item">
+            <a href="library-members.html" class="active"
+              ><span class="nav-icon">👥</span>Members</a
+            >
+          </li>
+          <li class="nav-item">
+            <a href="#issue-return"
+              ><span class="nav-icon">🔖</span>Issue / Return</a
+            >
+          </li>
+        </ul>
+      </aside>
+
+      <main class="main">
+        <div class="page-header">
+          <h1>Library Members</h1>
+          <button class="btn-primary" id="openModalBtn">+ Add Member</button>
+        </div>
+        <div class="members-layout">
+          <div class="members-sidebar">
+            <h2>Members</h2>
+
+            <div id="membersList"></div>
+          </div>
+
+          <div class="member-details" id="memberDetails">Select a member</div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      © 2026 Library Management System. Built for portfolio showcase.
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+      <form class="modal" id="addForm">
+        <div class="modal-header">
+          <h3>Add New Member</h3>
+          <button type="button" class="close-btn" id="closeModalBtn">✕</button>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Member Name</label
+            ><input id="membername" name="name" required />
+          </div>
+          <div class="field">
+            <label>Member ID</label
+            ><input id="memberId" name="memberId" required />
+          </div>
+        </div>
+        <div class="form-grid full" style="margin-top: 14px">
+          <div class="field">
+            <label>Email</label
+            ><input type="email" id="Email" name="email" required />
+          </div>
+        </div>
+        <!-- 
+        <div class="section-label">Borrowed Books</div>
+        <div id="booksContainer">
+          <div class="book-block">
+            <div class="book-block-head">
+              <span class="label">Book #1</span>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label>Book Name</label><input name="bookName" />
+              </div>
+              <div class="field"><label>ISBN</label><input name="isbn" /></div>
+              <div class="field">
+                <label>Issue Date</label><input type="date" name="issueDate" />
+              </div>
+              <div class="field">
+                <label>Due Date</label><input type="date" name="dueDate" />
+              </div>
+              <div class="field">
+                <label>Status</label>
+                <select name="status">
+                  <option>Not Returned</option>
+                  <option>Returned</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <button type="button" class="btn-add-book" id="addBookBtn">
+          + Add Another Book
+        </button> -->
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" id="cancelBtn">
+            Cancel
+          </button>
+          <button type="button" class="btn-primary" id="savememberbtn">
+            Save Member
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script src="library-members.js"></script>
+  </body>
+</html>

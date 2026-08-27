@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library Management System - Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <a href="dashboard.html" class="logo"> <span>📚</span> LibraryMS </a>
+      <div class="nav-right">
+        
+        <div class="admin-info">
+          <div class="admin-avatar">A</div>
+          <span>Admin</span>
+        </div>
+        <a href="login.html" class="btn-logout">Logout</a>
+      </div>
+    </nav>
+
+    <div class="main-wrapper">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <a href="#dashboard" class="active"
+            ><span class="nav-icon">📊</span> Dashboard</a
+          >
+          <a href="#books"><span class="nav-icon">📖</span> All Books</a>
+          <a href="#add-book"><span class="nav-icon">➕</span> Add Book</a>
+
+          <a href="library-members.html"><span class="nav-icon">👥</span> Members</a>
+          <a href="#issue-return"
+><span class="nav-icon">🏷️</span> issue/return</a
+          >
+        </nav>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="content">
+        <h1 class="page-title">Dashboard</h1>
+
+        <!-- STAT CARDS -->
+        <div class="stats-grid">
+          <div class="stat-card purple">
+            <div class="stat-icon">📚</div>
+            <div class="stat-value" id="total"></div>
+            <div class="stat-label">Total Books</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="available"></div>
+            <div class="stat-label">Available</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-icon">📤</div>
+            <div class="stat-value" id="issued"></div>
+            <div class="stat-label">Issued</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-value" id="overdue"></div>
+            <div class="stat-label">Overdue</div>
+          </div>
+        </div>
+
+        <!-- ADD BOOK FORM -->
+         <div id = "addBookModal" class = "modal">
+          <div class = "modal-content">
+            <span class ="close-btn" onclick="closeModal()">&times;</span>
+              <div class="card" id="add-book" >
+          <div class="card-header" id = "modalTitle">Add New Book</div>
+          <div class="card-body">
+            <form>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Book Title</label>
+                  <input
+                    type="text"
+                    id="bookTitle"
+                    placeholder="Enter book title"
+                  />
+                </div>
+                <div class="form-field">
+                  <label>Author</label>
+                  <input type="text" id="author" placeholder="Author name" />
+                </div>
+                <div class="form-field">
+                  <label>ISBN</label>
+                  <input type="text" id="isbn" placeholder="ISBN number" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Category</label>
+                  <select id="category">
+                    <option value="">Select category</option>
+                    <option>Fiction</option>
+                    <option>Non-Fiction</option>
+                    <option>Science</option>
+                    <option>History</option>
+                    <option>Technology</option>
+                    <option>Biography</option>
+                    <option>Self-Help</option>
+                  </select>
+                </div>
+
+                <div class="form-field">
+                  <label>Quantity</label>
+                  <input
+                    type="number"
+                    id="quantity"
+                    placeholder="Number of copies"
+                    min="1"
+                  />
+                </div>
+                <div class="form-field">
+                  <label>Published Year</label>
+                  <input type="number" id="year" placeholder="e.g. 2023" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Shelf Location</label>
+                  <input type="text" id="location" placeholder="e.g. A3-R2" />
+                </div>
+                <div class="form-field">
+                  <label>Publisher</label>
+                  <input
+                    type="text"
+                    id="publisher"
+                    placeholder="Publisher name"
+                  />
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-primary" >Add Book</button>
+                <button type="reset" class="btn btn-secondary">Clear</button>
+              </div>
+            </form>
+          </div>
+        </div>
+          </div>
+         </div>
+      
+        <div id = "deleteModal" class = "modal">
+          <div class = "modal-content" style = "width : 350px ; text-align: center;">
+          <h3>Confirm Delete</h3>
+          <p>Are You Sure You want to delete this book? </p>
+          <div style = "margin-top: 15px;">
+            <button type = "button" class = "btn btn-secondary" id = "cancelDeleteBtn">Cancel</button>
+            <button class = "btn btn-danger" id = "confirmDeleteBtn">Delete</button>
+
+          </div>
+          </div>
+        </div>
+
+        <!-- BOOK COLLECTION TABLE -->
+        <div class="card" id="books">
+          <div class="card-header">
+            <span>Book Collection</span>
+            <div class = "header-actions">
+               <div class="search-bar" style="width: 150px;">
+              <span>🔍</span>
+              <input type="text" placeholder="Filter books..." id = "searchvalue" />
+              
+            </div>
+                <button type = "button" class = "btn btn-primary" onclick="openModal()">Add Book</button>
+            </div>
+           
+            
+          </div>
+          <div class="card-body">
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>ISBN</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Qty</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="book-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ISSUE / RETURN SECTION -->
+        <div class="issue-return-grid" id="issue-return">
+          <div class="card">
+            <div class="card-header">📤 Issue Book</div>
+            <div class="card-body">
+              <form>
+                <div class="form-field" style="margin-bottom: 14px">
+                  <label>Member ID</label>
+                  <input
+                    type="text"
+                    id="mem-id"
+                    placeholder="Enter member ID"
+                  />
+                </div>
+                <div class="form-field" style="margin-bottom: 14px">
+                  <label>Book ISBN</label>
+                  <input
+                    type="text"
+                    id="book-isbn"
+                    placeholder="Enter book ISBN"
+                  />
+                </div>
+                <div class="form-field" style="margin-bottom: 14px">
+                  <label>Issue Date</label>
+                  <input type="date" id="issue-date" />
+                </div>
+                <div class="form-field" style="margin-bottom: 14px">
+                  <label>Due Date</label>
+                  <input type="date" id="due-date" />
+                </div>
+                <button type="button" id="issuebookbtn" class="btn btn-success">
+                  Issue Book
+                </button>
+                <p id="successmessage"></p>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">📥 Return Book</div>
+            <div class="card-body">
+              <form>
+                <div class="form-field" style="margin-bottom: 14px">
+                  <label>Member ID</label>
+                  <input
+                    type="text"
+                    id="return-id"
+                    placeholder="Enter member ID"
+                  />
+                </div>
+                <div class="form-field" style="margin-bottom: 14px">
+                  <label>Book ISBN</label>
+                  <input
+                    type="text"
+                    id="return-Isbn"
+                    placeholder="Enter book ISBN"
+                  />
+                </div>
+                <div class="form-field" style="margin-bottom: 14px">
+                  <label>Return Date</label>
+                  <input type="date" id="return-date" />
+                </div>
+                <div class="form-field" style="margin-bottom: 14px">
+                  <label>Fine Amount (₹)</label>
+                  <input
+                    type="number"
+                    id="fine-amt"
+                    placeholder="0.00"
+                    min="0"
+                  />
+                </div>
+                <button type="button" class="btn btn-primary btn-return">
+                  Return Book
+                </button>
+                <p id="Returnmessage"></p>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- MEMBERS SECTION -->
+        <!-- <div class="card" id="members" style="margin-top: 24px">
+          <div class="card-header">Library Members</div>
+          <div class="card-body">
+            <div class="members-grid">
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- FOOTER -->
+        <div class="footer">
+          &copy; 2026 Library Management System. Built for portfolio showcase.
+        </div>
+      </main>
+    </div>
+    <script src="dashboard.js"></script>
+  </body>
+</html>

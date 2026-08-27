@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library Management System - Login</title>
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="login-header">
+        <div class="icon">📚</div>
+        <h1>Library Management</h1>
+        <p>Sign in to manage your library</p>
+      </div>
+
+      <form>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="admin@library.com"
+            autocomplete="off"
+          />
+          <p id="emailError"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+          />
+          <p id="passwordError"></p>
+        </div>
+
+        <div class="form-options">
+          <label><input type="checkbox" id="remember" /> Remember me</label>
+          <a href="forgot-password.html">Forgot password?</a>
+        </div>
+
+        <div class="btn-login">Sign In</div>
+        <p id="loginMessage"></p>
+
+      
+      </form>
+    </div>
+    <script src="login.js"></script>
+  </body>
+</html>
