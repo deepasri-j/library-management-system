@@ -1,5 +1,5 @@
 const pool = require("../db");
-
+//testing my Git workflow
 const getAuthors = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM authors");
@@ -15,10 +15,9 @@ const getAuthorById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query(
-      "SELECT * FROM authors WHERE id = $1",
-      [id],
-    );
+    const result = await pool.query("SELECT * FROM authors WHERE id = $1", [
+      id,
+    ]);
 
     if (result.rows.length === 0) {
       return res.status(404).send("Author not found");
@@ -39,10 +38,9 @@ const createAuthor = async (req, res) => {
   }
 
   try {
-    await pool.query(
-      "INSERT INTO authors(author_name) VALUES ($1)",
-      [author_name],
-    );
+    await pool.query("INSERT INTO authors(author_name) VALUES ($1)", [
+      author_name,
+    ]);
 
     res.send("Author inserted successfully");
   } catch (error) {
@@ -56,10 +54,10 @@ const updateAuthor = async (req, res) => {
   const { author_name } = req.body;
 
   try {
-    await pool.query(
-      "UPDATE authors SET author_name = $1 WHERE id = $2",
-      [author_name, id],
-    );
+    await pool.query("UPDATE authors SET author_name = $1 WHERE id = $2", [
+      author_name,
+      id,
+    ]);
 
     res.send("Author updated successfully");
   } catch (error) {
@@ -72,10 +70,7 @@ const deleteAuthor = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query(
-      "DELETE FROM authors WHERE id = $1",
-      [id],
-    );
+    const result = await pool.query("DELETE FROM authors WHERE id = $1", [id]);
 
     if (result.rowCount === 0) {
       return res.status(404).send("Author not found");
