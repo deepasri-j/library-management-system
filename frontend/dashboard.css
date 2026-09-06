@@ -529,3 +529,61 @@ table tbody tr:hover {
     padding: 0 16px;
   }
 }
+
+.author-modal {
+  width: 400px;
+  padding: 30px;
+  text-align: left;
+  border-radius: 12px;
+  position: relative;
+}
+
+.author-modal h3 {
+  margin: 0 0 25px;
+  text-align: center;
+  font-size: 22px;
+}
+
+.author-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.author-form label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.author-form input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.author-form input:focus {
+  outline: none;
+  border-color: #6c63ff;
+}
+
+.author-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.author-actions button {
+  min-width: 100px;
+}
+
+#closeAuthorModal {
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  cursor: pointer;
+  font-size: 24px;
+}

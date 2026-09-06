@@ -15,10 +15,9 @@ const getPublisherById = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const result = await pool.query(
-      "SELECT * FROM publishers WHERE id = $1",
-      [id],
-    );
+    const result = await pool.query("SELECT * FROM publishers WHERE id = $1", [
+      id,
+    ]);
 
     if (result.rows.length === 0) {
       return res.status(404).send("Publisher not found");
@@ -38,12 +37,14 @@ const createPublisher = async (req, res) => {
   }
 
   try {
-    await pool.query(
-      "INSERT INTO publishers(publisher_name) VALUES($1)",
+    const result = await pool.query(
+      "INSERT INTO publishers(publisher_name) VALUES($1) RETURNING *",
       [publisher_name],
     );
 
-    res.send("Publisher inserted successfully");
+    res.json({message: "Publisher Inserted Successfully",
+      publisher: result.rows[0],
+    })
   } catch (error) {
     console.log(error);
     res.status(500).send("Something went wrong");
@@ -78,10 +79,9 @@ const deletePublisher = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const result = await pool.query(
-      "DELETE FROM publishers WHERE id = $1",
-      [id],
-    );
+    const result = await pool.query("DELETE FROM publishers WHERE id = $1", [
+      id,
+    ]);
 
     if (result.rowCount === 0) {
       return res.status(404).send("Publisher not found");

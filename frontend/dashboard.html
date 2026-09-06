@@ -11,7 +11,6 @@
     <nav class="navbar">
       <a href="dashboard.html" class="logo"> <span>📚</span> LibraryMS </a>
       <div class="nav-right">
-        
         <div class="admin-info">
           <div class="admin-avatar">A</div>
           <span>Admin</span>
@@ -30,9 +29,11 @@
           <a href="#books"><span class="nav-icon">📖</span> All Books</a>
           <a href="#add-book"><span class="nav-icon">➕</span> Add Book</a>
 
-          <a href="library-members.html"><span class="nav-icon">👥</span> Members</a>
+          <a href="library-members.html"
+            ><span class="nav-icon">👥</span> Members</a
+          >
           <a href="#issue-return"
-><span class="nav-icon">🏷️</span> issue/return</a
+            ><span class="nav-icon">🏷️</span> issue/return</a
           >
         </nav>
       </aside>
@@ -66,110 +67,183 @@
         </div>
 
         <!-- ADD BOOK FORM -->
-         <div id = "addBookModal" class = "modal">
-          <div class = "modal-content">
-            <span class ="close-btn" onclick="closeModal()">&times;</span>
-              <div class="card" id="add-book" >
-          <div class="card-header" id = "modalTitle">Add New Book</div>
-          <div class="card-body">
-            <form>
-              <div class="form-row">
-                <div class="form-field">
-                  <label>Book Title</label>
-                  <input
-                    type="text"
-                    id="bookTitle"
-                    placeholder="Enter book title"
-                  />
-                </div>
-                <div class="form-field">
-                  <label>Author</label>
-                  <input type="text" id="author" placeholder="Author name" />
-                </div>
-                <div class="form-field">
-                  <label>ISBN</label>
-                  <input type="text" id="isbn" placeholder="ISBN number" />
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-field">
-                  <label>Category</label>
-                  <select id="category">
-                    <option value="">Select category</option>
-                    <option>Fiction</option>
-                    <option>Non-Fiction</option>
-                    <option>Science</option>
-                    <option>History</option>
-                    <option>Technology</option>
-                    <option>Biography</option>
-                    <option>Self-Help</option>
-                  </select>
-                </div>
+        <div id="addBookModal" class="modal">
+          <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="card" id="add-book">
+              <div class="card-header" id="modalTitle">Add New Book</div>
+              <div class="card-body">
+                <form>
+                  <div class="form-row">
+                    <div class="form-field">
+                      <label>Book Title</label>
+                      <input
+                        type="text"
+                        id="bookTitle"
+                        placeholder="Enter book title"
+                      />
+                    </div>
+                    <div class="form-field">
+                      <label>Author</label>
+                      <select id="author">
+                        <option value="">Select author</option>
+                        <option value="add-new">+ Add New Author</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label>ISBN</label>
+                      <input type="text" id="isbn" placeholder="ISBN number" />
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-field">
+                      <label>Category</label>
+                      <select id="category">
+                        <option value="">Select category</option>
+                      </select>
+                    </div>
 
-                <div class="form-field">
-                  <label>Quantity</label>
-                  <input
-                    type="number"
-                    id="quantity"
-                    placeholder="Number of copies"
-                    min="1"
-                  />
-                </div>
-                <div class="form-field">
-                  <label>Published Year</label>
-                  <input type="number" id="year" placeholder="e.g. 2023" />
-                </div>
+                    <div class="form-field">
+                      <label>Quantity</label>
+                      <input
+                        type="number"
+                        id="quantity"
+                        placeholder="Number of copies"
+                        min="1"
+                      />
+                    </div>
+                    <div class="form-field">
+                      <label>Published Year</label>
+                      <input type="number" id="year" placeholder="e.g. 2023" />
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-field">
+                      <label>Shelf Location</label>
+                      <input
+                        type="text"
+                        id="location"
+                        placeholder="e.g. A3-R2"
+                      />
+                    </div>
+                    <div class="form-field">
+                      <label>Publisher</label>
+                      <select id="publisher">
+                        <option value="">Select publisher</option>
+                        <option value="add-new">+ Add New Publisher</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-actions">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      id="saveBookBtn"
+                    >
+                      Add Book
+                    </button>
+                    <button type="reset" class="btn btn-secondary">
+                      Clear
+                    </button>
+                  </div>
+                </form>
               </div>
-              <div class="form-row">
-                <div class="form-field">
-                  <label>Shelf Location</label>
-                  <input type="text" id="location" placeholder="e.g. A3-R2" />
-                </div>
-                <div class="form-field">
-                  <label>Publisher</label>
-                  <input
-                    type="text"
-                    id="publisher"
-                    placeholder="Publisher name"
-                  />
-                </div>
-              </div>
-              <div class="form-actions">
-                <button type="button" class="btn btn-primary" >Add Book</button>
-                <button type="reset" class="btn btn-secondary">Clear</button>
-              </div>
-            </form>
+            </div>
           </div>
         </div>
-          </div>
-         </div>
-      
-        <div id = "deleteModal" class = "modal">
-          <div class = "modal-content" style = "width : 350px ; text-align: center;">
-          <h3>Confirm Delete</h3>
-          <p>Are You Sure You want to delete this book? </p>
-          <div style = "margin-top: 15px;">
-            <button type = "button" class = "btn btn-secondary" id = "cancelDeleteBtn">Cancel</button>
-            <button class = "btn btn-danger" id = "confirmDeleteBtn">Delete</button>
 
-          </div>
+        <div id="publisherModal" class="modal">
+          <div class="modal-content" style="width: 350px; text-align: center">
+            <h3>Add New Publisher</h3>
+            <input
+              type="text"
+              id="newPublisherName"
+              placeholder="Enter Publisher name"
+            />
+            <div style="margin-top: 15px">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="cancelPublisherBtn"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="savePublisherBtn"
+              >
+                Add Publisher
+              </button>
+            </div>
           </div>
         </div>
+        
+        <div id="deleteModal" class="modal">
+          <div class="modal-content" style="width: 350px; text-align: center">
+            <h3>Confirm Delete</h3>
+            <p>Are You Sure You want to delete?</p>
+            <div style="margin-top: 15px">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="cancelDeleteBtn"
+              >
+                Cancel
+              </button>
+              <button class="btn btn-danger" id="confirmDeleteBtn">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="authorModal" class="modal">
+          <div class="modal-content" style="width: 350px; text-align: center">
+            <h3>Add New Author</h3>
+            <input
+              type="text"
+              id="newAuthorName"
+              placeholder="Enter author name"
+            />
+            <div style="margin-top: 15px">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="cancelAuthorBtn"
+              >
+                Cancel
+              </button>
+              <button type="button" class="btn btn-primary" id="saveAuthorBtn">
+                Add Author
+              </button>
+            </div>
+          </div>
+        </div>
+
+
 
         <!-- BOOK COLLECTION TABLE -->
         <div class="card" id="books">
           <div class="card-header">
             <span>Book Collection</span>
-            <div class = "header-actions">
-               <div class="search-bar" style="width: 150px;">
-              <span>🔍</span>
-              <input type="text" placeholder="Filter books..." id = "searchvalue" />
-              
+            <div class="header-actions">
+              <div class="search-bar" style="width: 150px">
+                <span>🔍</span>
+                <input
+                  type="text"
+                  placeholder="Filter books..."
+                  id="searchvalue"
+                />
+              </div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="openBookModalBtn"
+              >
+                Add Book
+              </button>
             </div>
-                <button type = "button" class = "btn btn-primary" onclick="openModal()">Add Book</button>
-            </div>
-           
-            
           </div>
           <div class="card-body">
             <div class="table-wrapper">

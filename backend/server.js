@@ -7,7 +7,8 @@ const membersRoutes = require("./routes/members");
 const issuedbooksRoutes = require("./routes/issued_books");
 const returnedbookRoutes = require("./routes/returned_book");
 const bookRoutes = require("./routes/books");
-const pool = require("./db");
+const dashboardRoutes = require("./routes/dashboardroutes");
+
 const app = express();
 
 app.use(cors());
@@ -19,7 +20,7 @@ app.use("/members", membersRoutes);
 app.use("/issued-books", issuedbooksRoutes);
 app.use("/returned-books", returnedbookRoutes);
 app.use("/books", bookRoutes);
-app.use("/members", membersRoutes);
+app.use("/stats", dashboardRoutes);
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });

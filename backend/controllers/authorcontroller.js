@@ -38,11 +38,15 @@ const createAuthor = async (req, res) => {
   }
 
   try {
-    await pool.query("INSERT INTO authors(author_name) VALUES ($1)", [
-      author_name,
-    ]);
+    const result = await pool.query(
+      "INSERT INTO authors(author_name) VALUES ($1) RETURNING *",
+      [author_name],
+    );
 
-    res.send("Author inserted successfully");
+    res.json({
+      message: "Author inserted successfully",
+      author: result.rows[0],
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send("something went wrong");
