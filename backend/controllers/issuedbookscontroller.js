@@ -5,6 +5,8 @@ const issueBook = async (req, res) => {
 
   try {
     await client.query("BEGIN");
+    console.log("Content-Type:", req.headers["content-type"]);
+    console.log("body:", req.body);
     const { member_id, book_isbn, issued_date, due_date } = req.body;
     const memberResult = await client.query(
       "SELECT id FROM members WHERE member_id = $1",

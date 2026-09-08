@@ -92,7 +92,7 @@
                     </div>
                     <div class="form-field">
                       <label>ISBN</label>
-                      <input type="text" id="isbn" placeholder="ISBN number" />
+                      <input type="text" id="isbn" placeholder="ISBN number" maxlength = "14" />
                     </div>
                   </div>
                   <div class="form-row">
@@ -100,6 +100,7 @@
                       <label>Category</label>
                       <select id="category">
                         <option value="">Select category</option>
+                        <option value="add-new">+ Add New Category</option>
                       </select>
                     </div>
 
@@ -134,6 +135,7 @@
                       </select>
                     </div>
                   </div>
+
                   <div class="form-actions">
                     <button
                       type="button"
@@ -178,7 +180,33 @@
             </div>
           </div>
         </div>
-        
+        <div id="categoryModal" class="modal">
+          <div class="modal-content" style="width: 350px; text-align: center">
+            <h3>Add New Category</h3>
+            <input
+              type="text"
+              id="newCategoryName"
+              placeholder="Enter category name"
+            />
+            <div style="margin-top: 15px">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="cancelCategoryBtn"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="saveCategoryBtn"
+              >
+                Add Category
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div id="deleteModal" class="modal">
           <div class="modal-content" style="width: 350px; text-align: center">
             <h3>Confirm Delete</h3>
@@ -220,8 +248,6 @@
             </div>
           </div>
         </div>
-
-
 
         <!-- BOOK COLLECTION TABLE -->
         <div class="card" id="books">

@@ -83,30 +83,24 @@ const updatebook = async (req, res) => {
       shelf_location,
       publisher_id,
     } = req.body;
-    // const authorResult = await pool.query(
-    //   "SELECT id FROM authors WHERE author_id = $1",
-    //   [author],
-    // );
-    // const publisherResult = await pool.query(
-    //   "SELECT id FROM publishers WHERE publisher_name = $1",
-    //   [publisher],
-    // );
-    // const categoryResult = await pool.query(
-    //   "SELECT id FROM book_category WHERE category_name = $1",
-    //   [category],
-    // );
-    // if (
-    //   authorResult.rows.length === 0 ||
-    //   publisherResult.rows.length === 0 ||
-    //   categoryResult.rows.length === 0
-    // ) {
-    //   return res
-    //     .status(404)
-    //     .json({ message: "Author, publisher or category not found" });
-    // }
+    const currentBook = await pool.query(
+      "SELECT total_copies, available_copies FROM books WHERE id = $1",
+      [id],
+    );
+    if (currentBook.rows.length === 0) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+    const issuedCopies =
+      currentBook.rows[0].total_copies - currentBook.rows[0].available_copies;
+    const newAvailableCopies = total_copies - issuedCopies;
+    if (newAvailableCopies < 0) {
+      return res.status(400).json({
+        message: "Total copies cannot be less than currently issued copies",
+      });
+    }
 
     const result = await pool.query(
-      "UPDATE books SET title = $1, author_id = $2 ,isbn = $3, publisher_id =$4, category_id =$5, published_year =$6, total_copies =$7,  shelf_location =$8 WHERE id = $9 RETURNING *",
+      "UPDATE books SET title = $1, author_id = $2 ,isbn = $3, publisher_id =$4, category_id =$5, published_year =$6, total_copies =$7,  available_copies = $8, shelf_location =$9 WHERE id = $10 RETURNING *",
       [
         title,
         author_id,
@@ -115,6 +109,7 @@ const updatebook = async (req, res) => {
         category_id,
         published_year,
         total_copies,
+        newAvailableCopies,
         shelf_location,
         id,
       ],

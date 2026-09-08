@@ -3,6 +3,7 @@ const totalbooks = document.querySelector("#total");
 const availablebooks = document.querySelector("#available");
 const issuedbooks = document.querySelector("#issued");
 const overduebooks = document.querySelector("#overdue");
+
 //Add book form
 const author = document.querySelector("#author");
 const publisher = document.querySelector("#publisher");
@@ -38,8 +39,25 @@ openBookModalBtn.addEventListener("click", function () {
   openModal();
 });
 
+//isbn format
+isbn.addEventListener("input", function () {
+  let value = isbn.value.replace(/\D/g, "");
+  value = value.slice(0, 12);
+  if (value.length > 8) {
+    value = value.slice(0, 4) + "-" + value.slice(4, 8) + "-" + value.slice(8);
+  } else if (value.length > 4) {
+    value = value.slice(0, 4) + "-" + value.slice(4);
+  }
+  isbn.value = value;
+});
+
 //Add book
 saveBookBtn.addEventListener("click", async function () {
+  const isbnDigits = isbn.value.replace(/-/g, "");
+  if (!/^\d{12}$/.test(isbnDigits)) {
+    alert("ISBN must contain exactly 12 digits");
+    return;
+  }
   const bookData = {
     title: bookTitle.value,
     isbn: isbn.value,
@@ -87,6 +105,7 @@ async function loadDashboardStats() {
   overduebooks.textContent = data.overdue;
 }
 loadDashboardStats();
+
 //display books
 function renderbooks(books) {
   tbody.innerHTML = "";
@@ -99,7 +118,7 @@ function renderbooks(books) {
                       <td>${book.isbn}</td>
                       <td>${book.category_name}</td>
                       <td>${status}</td>
-                      <td>${book.total_copies}</td>
+                      <td>${book.available_copies}</td>
                       <td>
                       <button class = "btn btn-warning btn-sm edit-btn" data-id = "${book.id}">Edit</button>
                       <button class = "btn btn-danger btn-sm delete-btn" data-id = "${book.id}" > Delete </button>
@@ -113,7 +132,6 @@ let editingBookId = null;
 
 //edit books
 const tbody = document.querySelector(".book-body");
-
 tbody.addEventListener("click", function (event) {
   if (event.target.classList.contains("edit-btn")) {
     const bookId = event.target.dataset.id;
@@ -176,6 +194,7 @@ confirmDeleteBtn.addEventListener("click", async function () {
     alert(data.message);
   }
 });
+
 //load books
 async function loadBooks() {
   const response = await fetch("http://localhost:3000/books");
@@ -183,6 +202,7 @@ async function loadBooks() {
   renderbooks(books);
 }
 loadBooks();
+
 //load authors
 author.addEventListener("change", function () {
   if (author.value === "add-new") {
@@ -225,9 +245,11 @@ saveAuthorBtn.addEventListener("click", async function () {
 async function loadauthors() {
   const response = await fetch("http://localhost:3000/authors");
   const authors = await response.json();
-  author.querySelectorAll("option:not([value = '']):not([value = 'add-new'])").forEach(function(option){
-    option.remove();
-  });
+  author
+    .querySelectorAll("option:not([value = '']):not([value = 'add-new'])")
+    .forEach(function (option) {
+      option.remove();
+    });
 
   authors.forEach(function (authorData) {
     const option = document.createElement("option");
@@ -237,6 +259,7 @@ async function loadauthors() {
   });
 }
 loadauthors();
+
 //load publishers
 publisher.addEventListener("change", function () {
   if (publisher.value === "add-new") {
@@ -292,10 +315,17 @@ async function loadpublishers() {
   });
 }
 loadpublishers();
+
 //load categories
 async function loadcategories() {
   const response = await fetch("http://localhost:3000/categories");
   const categories = await response.json();
+
+  category
+    .querySelectorAll("option:not([value='']):not([value = 'add-new'])")
+    .forEach(function (option) {
+      option.remove();
+    });
   categories.forEach(function (categoryData) {
     const option = document.createElement("option");
     option.value = categoryData.id;
@@ -305,326 +335,114 @@ async function loadcategories() {
 }
 loadcategories();
 
-/*
+category.addEventListener("change", function () {
+  if (category.value === "add-new") {
+    document.getElementById("categoryModal").style.display = "block";
+    console.log("Add new category Selected");
+  }
+});
+const cancelCategoryBtn = document.getElementById("cancelCategoryBtn");
+cancelCategoryBtn.addEventListener("click", function () {
+  console.log("cancel Category clicked");
+  document.getElementById(cancelCategoryBtn).style.display = "none";
+});
 
-const btnaddbook = document.querySelector(".btn.btn-primary");
-const btnclearbook = document.querySelector(".btn.btn-secondary");
-const btnreturnbook = document.querySelector(".btn.btn-return");
-const returnMemberId = document.querySelector("#return-id");
-const returnisbn = document.querySelector("#return-Isbn");
-const returndate = document.querySelector("#return-date");
-const fineamt = document.querySelector("#fine-amt");
-const memberId = document.querySelector("#mem-id");
-const bookISBN = document.querySelector("#book-isbn");
-const issuedate = document.querySelector("#issue-date");
-const duedate = document.querySelector("#due-date");
-const successmsg = document.querySelector("#successmessage");
-const Returnmsg = document.querySelector("#Returnmessage");
-const displaybooks = document.querySelector(".table-wrapper");
-//const stattotalbooks = document.querySelector(".stat-value");
-const bookname = document.querySelector("#bookTitle");
-const authorname = document.querySelector("#author");
-const isbn = document.querySelector("#isbn");
-const category = document.querySelector("#category");
-const quantity = document.querySelector("#quantity");
-const publishedYear = document.querySelector("#year");
-const place = document.querySelector("#location");
-const publisher = document.querySelector("#publisher");
-const tbody = document.querySelector(".book-body");
-const issuebtn = document.querySelector("#issuebookbtn");
-const totalbooks = document.querySelector("#total");
-const availablebooks = document.querySelector("#available");
-const sissuedbooks = document.querySelector("#issued");
-const overduebooks = document.querySelector("#overdue");
-const mem1 = document.querySelector("#mem1");
-const mem2 = document.querySelector("#mem2");
-const mem3 = document.querySelector("#mem3");
-const mem4 = document.querySelector("#mem4");
+const saveCategoryBtn = document.getElementById("saveCategoryBtn");
+const newCategoryName = document.getElementById("newCategoryName");
 
-let booklist = [];
-let editIndex = null;
-
-const renderbooks = function (booklist) {
-  tbody.innerHTML = "";
-  booklist.forEach(function (book, index) {
-    const row = document.createElement("tr");
-    const categoryClass = book.category
-      ? book.category.toLowerCase().replaceAll(" ", "-")
-      : "default";
-    const status = book.quantity === 0 ? "Out of Stock" : "Available";
-    row.innerHTML = `
-    <td>${index + 1} </td>
-    <td>${book.title} </td>
-    <td>${book.author}</td>
-    <td>${book.ISBN}</td>
-    <td>
-      <span class="badge badge-${categoryClass}">
-        ${book.category}
-      </span>
-    </td>
-    
-    <td>${status}</td>
-    <td>${book.quantity}</td>
-    <td>
-      <div class = "action-btns">
-       <button class = "btn btn-warning btn-sm edit-btn"> Edit </button> 
-       
-       <button class = "btn btn-danger btn-sm delete-btn"> Delete </button>   
-      </div>
-    </td>
- `;
-
-    tbody.appendChild(row);
-    let deleteIndex = null;
-    function openDeleteModal(index) {
-      deleteIndex = index;
-      document.getElementById("deleteModal").style.display = "block";
-    }
-    function closeDeleteModal() {
-      document.getElementById("deleteModal").style.display = "none";
-    }
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") {
-        closeModal();
-        closeDeleteModal();
-      }
-    });
-
-    const deletebtn = row.querySelector(".delete-btn");
-    deletebtn.addEventListener("click", function () {
-      openDeleteModal(index);
-    });
-    document
-      .getElementById("cancelDeleteBtn")
-      .addEventListener("click", closeDeleteModal);
-    document
-      .getElementById("confirmDeleteBtn")
-      .addEventListener("click", function () {
-        if (deleteIndex !== null) {
-          booklist.splice(deleteIndex, 1);
-          localStorage.setItem("books", JSON.stringify(booklist));
-          renderbooks(booklist);
-          updateDashBoard();
-          deleteIndex = null;
-        }
-        closeDeleteModal();
-      });
-
-    const editbtn = row.querySelector(".edit-btn");
-    editbtn.addEventListener("click", function () {
-      console.log(" edit clicked");
-      editIndex = index;
-      bookname.value = book.title;
-      authorname.value = book.author;
-      isbn.value = book.ISBN;
-      category.value = book.category;
-      quantity.value = book.quantity;
-      publishedYear.value = book.publishedyear;
-      place.value = book.location;
-      publisher.value = book.publisher;
-      openModal();
-      document.querySelector(".btn-primary").innerText = "Update Book";
-      document.getElementById("modalTitle").innerText = "Update Book";
-    });
+saveCategoryBtn.addEventListener("click", async function () {
+  const categoryName = newCategoryName.value.trim();
+  if (categoryName === "") {
+    alert("Please Enter Category Name");
+    return;
+  }
+  const response = await fetch("http://localhost:3000/categories", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ category_name: categoryName }),
   });
-};
-function openModal() {
-  document.getElementById("addBookModal").style.display = "block";
-}
-function closeModal() {
-  document.getElementById("addBookModal").style.display = "none";
-}
-
-btnaddbook.addEventListener("click", function (e) {
-  e.preventDefault();
-
-  const book = {
-    title: bookname.value,
-    author: authorname.value,
-    ISBN: isbn.value,
-    category: category.value,
-    quantity: Number(quantity.value),
-    publishedyear: publishedYear.value,
-    location: place.value,
-    publisher: publisher.value,
-  };
-  if (editIndex !== null) {
-    booklist[editIndex] = book;
-    editIndex = null;
+  const data = await response.json();
+  if (response.ok) {
+    alert(data.message);
+    document.getElementById("categoryModal").style.display = "none";
+    newCategoryName.value = "";
+    loadcategories();
   } else {
-    booklist.push(book);
+    alert(data.message);
   }
-
-  localStorage.setItem("books", JSON.stringify(booklist));
-  renderbooks(booklist);
-  updateDashBoard();
-
-  document.querySelector(".btn-primary").innerText = "Add Book";
-  document.getElementById("modalTitle").innerText = "Add New Book";
-  closeModal();
-
-  ((bookname.value = ""),
-    (authorname.value = ""),
-    (isbn.value = ""),
-    (category.value = ""),
-    (quantity.value = ""),
-    (publishedYear.value = ""),
-    (place.value = ""),
-    (publisher.value = ""));
 });
 
-window.onclick = function (event) {
-  let modal = document.getElementById("addBookModal");
-  if (event.target === modal) {
-    modal.style.display = "none";
-  }
-};
+//Issue book
+const memberId = document.getElementById("mem-id");
+const bookISBN = document.getElementById("book-isbn");
+const issuedate = document.getElementById("issue-date");
+const duedate = document.getElementById("due-date");
+const issuebtn = document.getElementById("issuebookbtn");
+const successmsg = document.getElementById("successmessage");
 
-window.addEventListener("load", function () {
-  const data = localStorage.getItem("books");
-  if (data) booklist = JSON.parse(data);
-  renderbooks(booklist);
-});
-
-btnclearbook.addEventListener("click", function (e) {
+issuebtn.addEventListener("click", async function (e) {
   e.preventDefault();
-  ((bookname.value = ""),
-    (authorname.value = ""),
-    (isbn.value = ""),
-    (category.value = ""),
-    (quantity.value = ""),
-    (publishedYear.value = ""),
-    (place.value = ""),
-    (publisher.value = ""));
-});
-
-//issuebooks
-issuebtn.addEventListener("click", function (e) {
-  e.preventDefault();
-
-  const findbooks = booklist.find(
-    (book) => book.ISBN.trim() === bookISBN.value.trim(),
-  );
-
-  if (!findbooks) {
-    successmsg.textContent = "Wrong ISBN number!";
-    successmsg.style.color = "red";
-    setTimeout(() => (successmsg.textContent = ""), 1000);
-    return;
-  }
-  if (findbooks.quantity === 0) {
-    successmsg.textContent = "Out of Stock!";
-    successmsg.style.color = "red";
-    setTimeout(() => (successmsg.textContent = ""), 1000);
-    return;
-  }
-  const issuedbooks = {
-    memberID: memberId.value,
-    bookISBN: bookISBN.value,
-    bookName: findbooks.title,
-    issuedate: issuedate.value,
-    duedate: duedate.value,
-    returnDate: null,
-    status: "Not Returned",
+  const issueData = {
+    member_id: memberId.value,
+    book_isbn: bookISBN.value,
+    issued_date: issuedate.value,
+    due_date: duedate.value,
   };
 
-  let issuedbooklist = JSON.parse(localStorage.getItem("issuedbooklist")) || [];
-  findbooks.quantity -= 1;
-  issuedbooklist.push(issuedbooks);
-  successmsg.textContent = "Book issued successfully!";
-  successmsg.style.color = "green";
-
-  localStorage.setItem("issuedbooklist", JSON.stringify(issuedbooklist));
-  localStorage.setItem("books", JSON.stringify(booklist));
-  renderbooks(booklist);
-  ((memberId.value = ""),
-    (bookISBN.value = ""),
-    (issuedate.value = ""),
-    (duedate.value = ""),
-    setTimeout(() => (successmsg.textContent = ""), 1000));
-  updateDashBoard();
-});
-
-returndate.addEventListener("change", () => {
-  const issuedbooklist =
-    JSON.parse(localStorage.getItem("issuedbooklist")) || [];
-
-  const findbooks = issuedbooklist.find(
-    (book) => book.bookISBN.trim() === returnisbn.value.trim(),
-  );
-
-  if (!findbooks) return;
-
-  const returnd = new Date(returndate.value);
-  const dued = new Date(findbooks.duedate);
-
-  if (returnd > dued) {
-    const diff = returnd - dued;
-    const latedays = diff / (1000 * 60 * 60 * 24);
-    fineamt.value = Math.floor(latedays * 10);
+  const response = await fetch("http://localhost:3000/issued-books", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(issueData),
+  });
+  const data = await response.json();
+  if (response.ok) {
+    successmsg.textContent = data.message;
+    successmsg.style.color = "green";
+    ((memberId.value = ""),
+      (bookISBN.value = ""),
+      (issuedate.value = ""),
+      (duedate.value = ""));
+    loadBooks();
+    loadDashboardStats();
+    setTimeout(() => {
+      successmsg.textContent = "";
+    }, 1000);
   } else {
-    fineamt.value = 0;
+    successmsg.textContent = data.message;
+    successmsg.style.color = "red";
   }
-  updateDashBoard();
 });
 
-//returnbook
-btnreturnbook.addEventListener("click", function () {
-  const returnedbooks = {
-    rmemberID: returnMemberId.value,
-    rbookISBN: returnisbn.value,
-    returndate: returndate.value,
-    fineamt: fineamt.value,
-  };
+if (returnd > dued) {
+  const diff = returnd - dued;
+  latedays = diff / (1000 * 60 * 60 * 24);
+}
 
-  let issuedbooklist = JSON.parse(localStorage.getItem("issuedbooklist")) || [];
-  const findbooks = issuedbooklist.find(
-    (book) =>
-      book.bookISBN.trim() === returnedbooks.rbookISBN.trim() &&
-      book.memberID === returnedbooks.rmemberID,
-  );
-  if (!findbooks) {
-    Returnmsg.textContent = "Wrong ISBN or Member ID!";
-    Returnmsg.style.color = "red";
-    setTimeout(() => (Returnmsg.textContent = ""), 1000);
-    return;
-  }
-  const returnd = new Date(returndate.value);
-  const dued = new Date(findbooks.duedate);
+findbooks.returnDate = returndate.value;
+findbooks.status = "Returned";
 
-  let latedays = 0;
-
-  if (returnd > dued) {
-    const diff = returnd - dued;
-    latedays = diff / (1000 * 60 * 60 * 24);
-  }
-
-  findbooks.returnDate = returndate.value;
-  findbooks.status = "Returned";
-
-  const checkingquantity = booklist.find(
-    (book) => book.ISBN.trim() === returnedbooks.rbookISBN.trim(),
-  );
-  if (checkingquantity) {
-    checkingquantity.quantity += 1;
-  }
-  let returnbooklist = JSON.parse(localStorage.getItem("returnbooklist")) || [];
-  returnbooklist.push(returnedbooks);
-  Returnmsg.textContent =
-    latedays > 0
-      ? `Late by ${Math.floor(latedays)} days. Fine: ₹${fineamt.value}`
-      : "No fine. Book returned on time!";
-  Returnmsg.style.color = "green";
-  localStorage.setItem("issuedbooklist", JSON.stringify(issuedbooklist));
-  localStorage.setItem("returnbooklist", JSON.stringify(returnbooklist));
-  localStorage.setItem("books", JSON.stringify(booklist));
-  renderbooks(booklist);
-  ((returnMemberId.value = ""),
-    (returnisbn.value = ""),
-    (returndate.value = ""),
-    (fineamt.value = ""),
-    setTimeout(() => (Returnmsg.textContent = ""), 1000));
-});
+const checkingquantity = booklist.find(
+  (book) => book.ISBN.trim() === returnedbooks.rbookISBN.trim(),
+);
+if (checkingquantity) {
+  checkingquantity.quantity += 1;
+}
+let returnbooklist = JSON.parse(localStorage.getItem("returnbooklist")) || [];
+returnbooklist.push(returnedbooks);
+Returnmsg.textContent =
+  latedays > 0
+    ? `Late by ${Math.floor(latedays)} days. Fine: ₹${fineamt.value}`
+    : "No fine. Book returned on time!";
+Returnmsg.style.color = "green";
+localStorage.setItem("issuedbooklist", JSON.stringify(issuedbooklist));
+localStorage.setItem("returnbooklist", JSON.stringify(returnbooklist));
+localStorage.setItem("books", JSON.stringify(booklist));
+renderbooks(booklist);
+((returnMemberId.value = ""),
+  (returnisbn.value = ""),
+  (returndate.value = ""),
+  (fineamt.value = ""),
+  setTimeout(() => (Returnmsg.textContent = ""), 1000));
 
 //updateDashBoard
 function updateDashBoard() {
@@ -697,4 +515,3 @@ document.addEventListener("DOMContentLoaded", () => {
     renderbooks(filtered);
   });
 });
-*/

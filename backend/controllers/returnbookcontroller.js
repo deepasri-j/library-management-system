@@ -5,7 +5,7 @@ const returnbook = async (req, res) => {
     await client.query("BEGIN");
     const { member_id, book_isbn, return_date } = req.body;
     const issuedbookResult = await client.query(
-      "SELECT issued_books.id,issued_books.book_id,issued_books.member_id,issued_books.due_date,issued_books.status FROM issued_books JOIN books ON issued_books.book_id = books.id JOIN members ON issued_books.member_id = members.id WHERE members.member_id = $1 AND books.isbn = $2",
+      "SELECT issued_books.id,issued_books.book_id,issued_books.member_id,issued_books.due_date,issued_books.status FROM issued_books JOIN books ON issued_books.book_id = books.id JOIN members ON issued_books.member_id = members.id WHERE members.member_id = $1 AND books.isbn = $2 AND issued_books.status ='Not Returned'",
       [member_id, book_isbn],
     );
     if (issuedbookResult.rows.length === 0) {
