@@ -2,6 +2,10 @@ const modal = document.getElementById("modal");
 const openBtn = document.getElementById("openModalBtn");
 const closeBtn = document.getElementById("closeModalBtn");
 const cancelBtn = document.getElementById("cancelBtn");
+const saveMemberBtn = document.getElementById("saveMemberBtn");
+const memberNameInput = document.getElementById("memberName");
+const memberIdInput = document.getElementById("memberId");
+const emailInput = document.getElementById("Email");
 
 const membersList = document.getElementById("membersList");
 const membersDetails = document.getElementById("memberDetails");
@@ -131,3 +135,33 @@ async function renderMemberDetails(member) {
 </div>
 `;
 }
+
+//savememberbtn
+
+saveMemberBtn.addEventListener("click", async function () {
+  const memberData = {
+    member_id: memberIdInput.value.trim(),
+    member_name: memberNameInput.value.trim(),
+    email: emailInput.value.trim(),
+  };
+
+  const response = await fetch("http://localhost:3000/members", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(memberData),
+  });
+  const data = await response.json();
+  if (response.ok) {
+    alert("Member added successfully");
+    closeModal();
+
+    ((memberNameInput.value = ""),
+      (memberIdInput.value = ""),
+      (emailInput.value = ""));
+    getMembers();
+  } else {
+    alert(data.message);
+  }
+});

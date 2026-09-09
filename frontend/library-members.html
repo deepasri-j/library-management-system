@@ -27,10 +27,14 @@
             >
           </li>
           <li class="nav-item">
-            <a href="#books"><span class="nav-icon">📖</span>All Books</a>
+            <a href="dashboard.html#books"
+              ><span class="nav-icon">📖</span>All Books</a
+            >
           </li>
           <li class="nav-item">
-            <a href="#add-book"><span class="nav-icon">➕</span>Add Book</a>
+            <a href="dashboard.html#add-book"
+              ><span class="nav-icon">➕</span>Add Book</a
+            >
           </li>
           <li class="nav-item">
             <a href="library-members.html" class="active"
@@ -38,7 +42,7 @@
             >
           </li>
           <li class="nav-item">
-            <a href="#issue-return"
+            <a href="dashboard.html#issue-return"
               ><span class="nav-icon">🔖</span>Issue / Return</a
             >
           </li>
@@ -77,7 +81,7 @@
         <div class="form-grid">
           <div class="field">
             <label>Member Name</label
-            ><input id="membername" name="name" required />
+            ><input id="memberName" name="name" required />
           </div>
           <div class="field">
             <label>Member ID</label
@@ -90,44 +94,12 @@
             ><input type="email" id="Email" name="email" required />
           </div>
         </div>
-        <!-- 
-        <div class="section-label">Borrowed Books</div>
-        <div id="booksContainer">
-          <div class="book-block">
-            <div class="book-block-head">
-              <span class="label">Book #1</span>
-            </div>
-            <div class="form-grid">
-              <div class="field">
-                <label>Book Name</label><input name="bookName" />
-              </div>
-              <div class="field"><label>ISBN</label><input name="isbn" /></div>
-              <div class="field">
-                <label>Issue Date</label><input type="date" name="issueDate" />
-              </div>
-              <div class="field">
-                <label>Due Date</label><input type="date" name="dueDate" />
-              </div>
-              <div class="field">
-                <label>Status</label>
-                <select name="status">
-                  <option>Not Returned</option>
-                  <option>Returned</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div> -->
-
-        <!-- <button type="button" class="btn-add-book" id="addBookBtn">
-          + Add Another Book
-        </button> -->
 
         <div class="modal-footer">
           <button type="button" class="btn-cancel" id="cancelBtn">
             Cancel
           </button>
-          <button type="button" class="btn-primary" id="savememberbtn">
+          <button type="button" class="btn-primary" id="saveMemberBtn">
             Save Member
           </button>
         </div>

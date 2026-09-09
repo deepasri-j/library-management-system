@@ -12,10 +12,10 @@ const returnbook = async (req, res) => {
       await client.query("ROLLBACK");
       return res.status(404).json({ message: "Issued Book Not Found" });
     }
-    if (issuedbookResult.rows[0].status === "Returned") {
-      await client.query("ROLLBACK");
-      return res.status(409).json({ message: "Book already returned" });
-    }
+    // if (issuedbookResult.rows[0].status === "Returned") {
+    //   await client.query("ROLLBACK");
+    //   return res.status(409).json({ message: "Book already returned" });
+    // }
     const dueDate = new Date(issuedbookResult.rows[0].due_date);
     const returnDate = new Date(return_date);
     const lateDays = Math.max(

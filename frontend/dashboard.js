@@ -379,6 +379,19 @@ const issuedate = document.getElementById("issue-date");
 const duedate = document.getElementById("due-date");
 const issuebtn = document.getElementById("issuebookbtn");
 const successmsg = document.getElementById("successmessage");
+bookISBN.addEventListener("input", function () {
+  let value = bookISBN.value.replace(/\D/g, "");
+
+  value = value.slice(0, 12);
+
+  if (value.length > 8) {
+    value = value.slice(0, 4) + "-" + value.slice(4, 8) + "-" + value.slice(8);
+  } else if (value.length > 4) {
+    value = value.slice(0, 4) + "-" + value.slice(4);
+  }
+
+  bookISBN.value = value;
+});
 
 issuebtn.addEventListener("click", async function (e) {
   e.preventDefault();
@@ -413,105 +426,74 @@ issuebtn.addEventListener("click", async function (e) {
   }
 });
 
-if (returnd > dued) {
-  const diff = returnd - dued;
-  latedays = diff / (1000 * 60 * 60 * 24);
-}
+//return books
+const member_id = document.getElementById("return-id");
+const book_isbn = document.getElementById("return-Isbn");
+const return_date = document.getElementById("return-date");
+const fine_amount = document.getElementById("fine-amt");
+const returnmessage = document.getElementById("Returnmessage");
+const returnbtn = document.querySelector(".btn.btn-return");
 
-findbooks.returnDate = returndate.value;
-findbooks.status = "Returned";
+book_isbn.addEventListener("input", function () {
+  let value = book_isbn.value.replace(/\D/g, "");
 
-const checkingquantity = booklist.find(
-  (book) => book.ISBN.trim() === returnedbooks.rbookISBN.trim(),
-);
-if (checkingquantity) {
-  checkingquantity.quantity += 1;
-}
-let returnbooklist = JSON.parse(localStorage.getItem("returnbooklist")) || [];
-returnbooklist.push(returnedbooks);
-Returnmsg.textContent =
-  latedays > 0
-    ? `Late by ${Math.floor(latedays)} days. Fine: ₹${fineamt.value}`
-    : "No fine. Book returned on time!";
-Returnmsg.style.color = "green";
-localStorage.setItem("issuedbooklist", JSON.stringify(issuedbooklist));
-localStorage.setItem("returnbooklist", JSON.stringify(returnbooklist));
-localStorage.setItem("books", JSON.stringify(booklist));
-renderbooks(booklist);
-((returnMemberId.value = ""),
-  (returnisbn.value = ""),
-  (returndate.value = ""),
-  (fineamt.value = ""),
-  setTimeout(() => (Returnmsg.textContent = ""), 1000));
+  value = value.slice(0, 12);
 
-//updateDashBoard
-function updateDashBoard() {
-  let booklisted = JSON.parse(localStorage.getItem("books")) || [];
-  let issuedbooklist = JSON.parse(localStorage.getItem("issuedbooklist")) || [];
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  if (value.length > 8) {
+    value = value.slice(0, 4) + "-" + value.slice(4, 8) + "-" + value.slice(8);
+  } else if (value.length > 4) {
+    value = value.slice(0, 4) + "-" + value.slice(4);
+  }
 
-  totalbooks.textContent = booklisted.length;
-  availablebooks.textContent = booklisted.reduce(
-    (total, book) => total + book.quantity,
-    0,
-  );
-  sissuedbooks.textContent = issuedbooklist.filter(
-    (book) => book.returnDate === null,
-  ).length;
-  overduebooks.textContent = issuedbooklist.filter((book) => {
-    const due = new Date(book.duedate);
-    due.setHours(0, 0, 0, 0);
-    return book.returnDate === null && due < today;
-  }).length;
+  book_isbn.value = value;
+});
 
-  renderbooks(booklist);
-}
-updateDashBoard();
+returnbtn.addEventListener("click", async function (e) {
+  e.preventDefault();
+  const returnData = {
+    member_id: member_id.value,
+    book_isbn: book_isbn.value,
+    return_date: return_date.value,
+  };
+  const response = await fetch("http://localhost:3000/returned-books", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(returnData),
+  });
+  const data = await response.json();
+  if (response.ok) {
+    returnmessage.textContent = data.message;
+    returnmessage.style.color = "green";
+    ((fine_amount.value = data.fineAmount),
+      (member_id.value = ""),
+      (book_isbn.value = ""),
+      (return_date.value = ""));
 
-//librarymembers
-let memberCount = {};
-issuedbooklist = JSON.parse(localStorage.getItem("issuedbooklist")) || [];
-let activebooks = issuedbooklist.filter((book) => book.returnDate === null);
-
-activebooks.forEach(function (book) {
-  if (memberCount[book.memberID]) {
-    memberCount[book.memberID] += 1;
+    loadBooks();
+    loadDashboardStats();
+    setTimeout(() => {
+      returnmessage.textContent = "";
+      fine_amount.value = "";
+    }, 2000);
   } else {
-    memberCount[book.memberID] = 1;
+    returnmessage.textContent = data.message;
+    returnmessage.style.color = "red";
+    setTimeout(() => {
+      returnmessage.textContent = "";
+      ((member_id.value = ""),
+        (book_isbn.value = ""),
+        (return_date.value = ""));
+    }, 2000);
   }
 });
-console.log(memberCount);
 
-const membersgrid = document.querySelector(".members-grid");
-
-document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.querySelector("#searchvalue");
-
-  searchInput.addEventListener("input", function () {
-    const value = (searchInput.value.trim() || "").toLowerCase();
-    if (value === "") {
-      renderbooks(booklist);
-      return;
-    }
-
-    const filtered = booklist.filter((book) => {
-      const title = (book.title || "").toLowerCase();
-      const author = (book.author || "").toLowerCase();
-      const category = (book.category || "").toLowerCase();
-      const isbn = (book.ISBN || "").toString();
-
-      return title.includes(value);
+if (window.location.hash === "#issue-return") {
+  setTimeout(() => {
+    document.getElementById("issue-return").scrollIntoView({
+      behavior: "smooth",
+      block: "start",
     });
-    if (filtered.length === 0) {
-      tbody.innerHTML = `
-    <tr> 
-    <td colspan = "8" style = "text-align:center; padding : 20px;"> 
-    No Records Found
-    </td>
-    </tr>`;
-      return;
-    }
-    renderbooks(filtered);
-  });
-});
+  }, 300);
+}
