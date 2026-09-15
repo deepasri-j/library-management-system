@@ -9,7 +9,8 @@ const returnedbookRoutes = require("./routes/returned_book");
 const bookRoutes = require("./routes/books");
 const dashboardRoutes = require("./routes/dashboardroutes");
 const loginRoutes = require("./routes/loginroutes");
-
+const forgotpasswordRoutes = require("./routes/forgotpasswordroutes");
+const resetpasswordRoutes = require("./routes/resetpasswordroutes");
 const app = express();
 
 app.use(cors());
@@ -23,6 +24,8 @@ app.use("/returned-books", returnedbookRoutes);
 app.use("/books", bookRoutes);
 app.use("/stats", dashboardRoutes);
 app.use("/login", loginRoutes);
+app.use("/forgot-password", forgotpasswordRoutes);
+app.use("/reset-password", resetpasswordRoutes);
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });

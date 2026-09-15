@@ -1,56 +1,33 @@
-const np = document.querySelector("#new-password");
-const cp = document.querySelector("#confirm-password");
-const resetbtn = document.querySelector(".login-btn-submit");
-const errormsg = document.querySelector("#passmismatch");
-const oldpassword = localStorage.getItem("userPassword");
-const checkConfirmPassword = function (np, cp) {
-  if (np === cp) {
-    return true;
-  } else {
-    return false;
-  }
-};
+const newPassword = document.getElementById("new-password");
+const confirmPassword = document.getElementById("confirm-password");
+const passMismatch = document.getElementById("passmismatch");
+const form = document.querySelector("form");
 
-resetbtn.addEventListener("click", function (e) {
+form.addEventListener("submit", async function (e) {
   e.preventDefault();
-  const newpass = np.value;
-  const confirmpass = cp.value;
-  if (newpass === "" || confirmpass === "") {
-    errormsg.textContent = "Password cannot be empty!";
-    errormsg.style.color = "red";
+  const password = newPassword.value;
+  const confirm = confirmPassword.value;
+  if (password !== confirm) {
+    passMismatch.textContent = "Passwords do not match";
+    passMismatch.style.color = "red";
     return;
   }
-
-  const ismatch = checkConfirmPassword(newpass, confirmpass);
-
-  if (!ismatch) {
-    errormsg.textContent = "Passwords do not match";
-    errormsg.style.color = "red";
-    return;
-  }
-  if (newpass === oldpassword) {
-    errormsg.textContent =
-      "For security reasons, please choose a new password that you haven’t used before.";
-    errormsg.style.color = "red";
-    return;
-  }
-  if (newpass.length < 6) {
-    errormsg.textContent = "Password is too short!!";
-    return;
-  }
-  if (!/[A-Z]/.test(newpass)) {
-    errormsg.textContent = "password must contain upper Case";
-    return;
-  }
-  if (!/[0-9]/.test(newpass)) {
-    errormsg.textContent = "password must contain numbers";
-    return;
-  } else {
-    localStorage.setItem("userPassword", newpass);
-    errormsg.textContent = "Password updated successfully!";
-    errormsg.style.color = "green";
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
+  const response = await fetch("http://localhost:3000/reset-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token: token, newPassword: password }),
+  });
+  const data = await response.json();
+  if (response.ok) {
+    passMismatch.textContent = data.message;
+    passMismatch.style.color = "green";
     setTimeout(() => {
       window.location.href = "login.html";
-    }, 1000);
+    }, 1500);
+  } else {
+    passMismatch.textContent = data.message;
+    passMismatch.style.color = "red";
   }
 });
