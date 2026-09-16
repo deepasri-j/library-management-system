@@ -24,7 +24,7 @@ form.addEventListener("submit", async function (e) {
     verification.textContent = data.message;
     verification.style.color = "green";
     const resetLink = `reset-password.html?token=${data.resetToken}`;
-    console.log("Reset Link:", resetLink);
+    window.location.href = resetLink;
   } else {
     verification.textContent = data.message;
     verification.style.color = "red";

@@ -1,3 +1,9 @@
+//Dashboard protection
+const isLoggedIn = localStorage.getItem("isLoggedIn");
+if (isLoggedIn !== "true") {
+  window.location.href = "login.html";
+}
+
 //Dashboard stats
 const totalbooks = document.querySelector("#total");
 const availablebooks = document.querySelector("#available");
@@ -497,3 +503,9 @@ if (window.location.hash === "#issue-return") {
     });
   }, 300);
 }
+
+//logout
+const logoutbtn = document.getElementById("logoutBtn");
+logoutbtn.addEventListener("click", function () {
+  localStorage.removeItem("isLoggedIn");
+});
