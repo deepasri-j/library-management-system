@@ -1,4 +1,5 @@
 const pool = require("../db");
+const bcrypt = require("bcrypt");
 const resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
@@ -11,9 +12,11 @@ const resetPassword = async (req, res) => {
         message: "Invalid or expired reset token",
       });
     }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
     await pool.query(
       `UPDATE admins SET password = $1, reset_token = NULL, reset_token_expiry = NULL WHERE id = $2`,
-      [newPassword, result.rows[0].id],
+      [hashedPassword, result.rows[0].id],
     );
     res.status(200).json({ message: "Password reset successfully" });
   } catch (error) {
